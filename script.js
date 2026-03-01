@@ -285,20 +285,35 @@
     window.print();
   });
 
-  saveImageBtn.addEventListener("click", async () => {
-    const menuForExport = finalPreview.querySelector(".menu-inner") || finalPreview;
+  async function ensureHtml2Canvas() {
+    if (window.html2canvas) return window.html2canvas;
+
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
 
     if (!window.html2canvas) {
-      alert("Image export isn't available right now. Please refresh and try again.");
-      return;
+      throw new Error("html2canvas failed to load");
     }
 
+    return window.html2canvas;
+  }
+
+  saveImageBtn.addEventListener("click", async () => {
+    const menuForExport = finalPreview.querySelector(".menu-inner") || finalPreview;
     const originalLabel = saveImageBtn.textContent;
     saveImageBtn.disabled = true;
     saveImageBtn.textContent = "Rendering...";
 
     try {
-      const canvas = await window.html2canvas(menuForExport, {
+      const html2canvas = await ensureHtml2Canvas();
+
+      const canvas = await html2canvas(menuForExport, {
         backgroundColor: "#fffdf8",
         scale: 2,
         useCORS: true
@@ -315,7 +330,7 @@
       link.click();
     } catch (error) {
       console.error(error);
-      alert("Could not save image. Please try again.");
+      alert("Could not save image. Please try again after a refresh.");
     } finally {
       saveImageBtn.disabled = false;
       saveImageBtn.textContent = originalLabel;
