@@ -7,7 +7,7 @@
 (() => {
   const MAX_COURSES = 6;
   const MAX_DISHES = 3;
-  const LOGO_PATH = "../../alden/ancg_logo.png";
+  const LOGO_PATH = "./ancg_logo.png";
 
   const state = {
     hostName: "",
