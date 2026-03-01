@@ -34,6 +34,7 @@
   const livePreview = document.getElementById("livePreview");
   const finalPreview = document.getElementById("finalPreview");
   const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+  const saveImageBtn = document.getElementById("saveImageBtn");
   const startOverBtn = document.getElementById("startOverBtn");
 
   const courseTemplate = document.getElementById("courseTemplate");
@@ -282,6 +283,43 @@
 
   downloadPdfBtn.addEventListener("click", () => {
     window.print();
+  });
+
+  saveImageBtn.addEventListener("click", async () => {
+    const menuForExport = finalPreview.querySelector(".menu-inner") || finalPreview;
+
+    if (!window.html2canvas) {
+      alert("Image export isn't available right now. Please refresh and try again.");
+      return;
+    }
+
+    const originalLabel = saveImageBtn.textContent;
+    saveImageBtn.disabled = true;
+    saveImageBtn.textContent = "Rendering...";
+
+    try {
+      const canvas = await window.html2canvas(menuForExport, {
+        backgroundColor: "#fffdf8",
+        scale: 2,
+        useCORS: true
+      });
+
+      const link = document.createElement("a");
+      const safeHost = (state.hostName || "masters-menu")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "masters-menu";
+
+      link.download = `${safeHost}-menu.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (error) {
+      console.error(error);
+      alert("Could not save image. Please try again.");
+    } finally {
+      saveImageBtn.disabled = false;
+      saveImageBtn.textContent = originalLabel;
+    }
   });
 
   initState();
