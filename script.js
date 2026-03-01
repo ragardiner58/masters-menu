@@ -319,15 +319,37 @@
         useCORS: true
       });
 
-      const link = document.createElement("a");
       const safeHost = (state.hostName || "masters-menu")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "") || "masters-menu";
+      const filename = `${safeHost}-menu.png`;
 
-      link.download = `${safeHost}-menu.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) throw new Error("Image blob creation failed");
+
+      const file = new File([blob], filename, { type: "image/png" });
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Masters Dinner Menu",
+          text: "Menu image"
+        });
+      } else if (isMobile) {
+        const objectUrl = URL.createObjectURL(blob);
+        window.open(objectUrl, "_blank", "noopener,noreferrer");
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+        alert("Image opened in a new tab. Long-press it to save to Photos.");
+      } else {
+        const link = document.createElement("a");
+        const objectUrl = URL.createObjectURL(blob);
+        link.download = filename;
+        link.href = objectUrl;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+      }
     } catch (error) {
       console.error(error);
       alert("Could not save image. Please try again after a refresh.");
