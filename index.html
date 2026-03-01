@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masters Dinner Menu Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header no-print">
+      <h1>Masters Dinner Menu Generator</h1>
+      <p>Create an Augusta-inspired Champions Dinner menu and export a print-ready PDF.</p>
+    </header>
+
+    <!-- PAGE 1: FORM + LIVE PREVIEW -->
+    <main id="formPage" class="page page-form active" aria-label="Menu Builder">
+      <section class="builder-panel no-print" aria-label="Menu Form">
+        <form id="menuForm" novalidate>
+          <fieldset class="card">
+            <legend>Event Details</legend>
+
+            <label for="hostName">Host Name</label>
+            <input id="hostName" name="hostName" type="text" maxlength="80" required />
+
+            <label for="eventDate">Date</label>
+            <input id="eventDate" name="eventDate" type="text" maxlength="80" required />
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>Courses</legend>
+            <div id="coursesContainer" class="courses-container"></div>
+
+            <button id="addCourseBtn" type="button" class="btn btn-outline">Add Course</button>
+            <p class="helper">Up to 6 courses. Each course supports up to 3 dishes.</p>
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>Personal Note or Quote (Optional)</legend>
+            <label for="personalNote" class="sr-only">Personal Note</label>
+            <textarea id="personalNote" name="personalNote" rows="4" maxlength="300"></textarea>
+          </fieldset>
+
+          <div class="form-actions">
+            <button id="reviewBtn" type="submit" class="btn btn-primary">Review Menu</button>
+            <button id="resetBtn" type="button" class="btn btn-soft">Reset Form</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="preview-panel" aria-label="Live Preview">
+        <h2 class="preview-title no-print">Live Preview</h2>
+        <article id="livePreview" class="menu-sheet"></article>
+      </section>
+    </main>
+
+    <!-- PAGE 2: FINAL PREVIEW / PRINT -->
+    <section id="printPage" class="page page-print" aria-label="Final Menu Preview">
+      <article id="finalPreview" class="menu-sheet final-sheet"></article>
+
+      <div class="print-actions no-print">
+        <button id="downloadPdfBtn" class="btn btn-primary" type="button">Download as PDF</button>
+        <button id="startOverBtn" class="btn btn-outline" type="button">Start Over</button>
+      </div>
+    </section>
+  </div>
+
+  <template id="courseTemplate">
+    <section class="course-editor card" data-course-id="">
+      <div class="course-header">
+        <label>Course Title</label>
+        <button type="button" class="btn-link remove-course-btn">Remove Course</button>
+      </div>
+      <input class="course-title-input" type="text" maxlength="80" required />
+
+      <div class="dishes-container"></div>
+
+      <button type="button" class="btn btn-soft add-dish-btn">Add Dish</button>
+    </section>
+  </template>
+
+  <template id="dishTemplate">
+    <div class="dish-editor">
+      <div class="dish-row-top">
+        <label>Dish Name</label>
+        <button type="button" class="btn-link remove-dish-btn">Remove</button>
+      </div>
+      <input class="dish-name-input" type="text" maxlength="90" required />
+
+      <label>Short Description (Optional)</label>
+      <input class="dish-desc-input" type="text" maxlength="140" />
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
