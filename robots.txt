@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://masters-menu.com/sitemap.xml
